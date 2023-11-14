@@ -1,0 +1,15 @@
+{
+  "name": "lambda-office-conversion",
+  "version": "1.0.0",
+  "description": "AWS Lambda function for converting office files to PDF",
+  "main": "app.js",
+  "dependencies": {
+    "aws-sdk": "^2.1000.0",
+    "libreoffice-convert": "^2.0.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "He Yang",
+  "license": "ISC"
+}

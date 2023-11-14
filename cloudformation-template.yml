@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lambda Function for Office Conversion with Container Image'
+
+Parameters:
+  ImageRepositoryName:
+    Type: String
+    Description: 'ECR Repository Name for Lambda Container Image'
+
+  S3BucketName:
+    Type: String
+    Description: 'Name of the S3 Bucket to trigger the Lambda function'
+
+Resources:
+  OfficeConversionLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: OfficeConversionFunction
+      PackageType: Image
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ImageUri: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ImageRepositoryName}:latest
+      Architectures:
+        - x86_64
+      Timeout: 60
+      MemorySize: 3008
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: OfficeConversionFunctionExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaS3ECRPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:BatchGetImage
+                  - ecr:InitiateLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:CompleteLayerUpload
+                  - ecr:PutImage
+                Resource:
+                  - !Sub "arn:aws:s3:::${S3BucketName}/*"
+                  - !Sub "arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ImageRepositoryName}"
+                  
+  # Bucket:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     BucketName: !Ref S3BucketName
+  #     NotificationConfiguration:
+  #       LambdaConfigurations:
+  #         - Event: s3:ObjectCreated:*
+  #           Function: !GetAtt OfficeConversionLambda.Arn
+  #           Filter:
+  #             S3Key:
+  #               Rules:
+  #                 - Name: suffix
+  #                   Value: .txt
+
+Outputs:
+  LambdaFunctionArn:
+    Value: !GetAtt OfficeConversionLambda.Arn
+    Description: ARN of the Lambda function
