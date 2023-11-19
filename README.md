@@ -1,4 +1,4 @@
-# ppt2pdf
+# Convert office to pdf
 convert office document to pdf by aws lambda and generate thumbnails by aws lambda
 
 Guide:
