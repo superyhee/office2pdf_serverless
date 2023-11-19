@@ -14,7 +14,7 @@ CF_STACK_NAME="office-converter"
 LAMBDA_FUNCTION_NAME="OfficeConversionFunction"
 
 # 设置 S3 存储桶名称
-S3_BUCKET_NAME="streampi"
+S3_BUCKET_NAME="offce-convert-lambda"
 
 # 构建 Docker 镜像
 docker build -t $ECR_REPO_NAME:latest .
@@ -37,12 +37,12 @@ echo "ECR URI: $ECR_REPO_URI"
 # 标记 Docker 镜像
 docker tag $ECR_REPO_NAME:latest $ECR_REPO_URI:latest
 
-# 推送 Docker 镜像到 ECR
-# docker push $ECR_REPO_URI:latest
+#推送 Docker 镜像到 ECR
+docker push $ECR_REPO_URI:latest
 
-# 删除旧的 CloudFormation 堆栈
-# aws cloudformation delete-stack --stack-name $CF_STACK_NAME --region $AWS_REGION --profile $AWS_PROFILE
-# aws cloudformation wait stack-delete-complete --stack-name $CF_STACK_NAME --region $AWS_REGION --profile $AWS_PROFILE
+#删除旧的 CloudFormation 堆栈
+aws cloudformation delete-stack --stack-name $CF_STACK_NAME --region $AWS_REGION --profile $AWS_PROFILE
+aws cloudformation wait stack-delete-complete --stack-name $CF_STACK_NAME --region $AWS_REGION --profile $AWS_PROFILE
 
 # 部署新的 CloudFormation 堆栈
 aws cloudformation deploy \
@@ -53,7 +53,6 @@ aws cloudformation deploy \
   --region $AWS_REGION \
   --profile $AWS_PROFILE \
   --capabilities CAPABILITY_NAMED_IAM
-
 # 获取 Lambda 函数 ARN
 LAMBDA_FUNCTION_ARN=$(aws cloudformation describe-stacks --stack-name $CF_STACK_NAME --region $AWS_REGION --profile $AWS_PROFILE --query "Stacks[0].Outputs[?OutputKey=='LambdaFunctionArn'].OutputValue" --output text)
 

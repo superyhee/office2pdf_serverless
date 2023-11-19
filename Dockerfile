@@ -4,5 +4,8 @@ COPY lambda-function/ ${LAMBDA_TASK_ROOT}/
 
 RUN npm install
 
+# Install ImageMagick
+RUN yum install -y ImageMagick
+
 # Set the command to run your Lambda function
 CMD [ "app.handler" ]
