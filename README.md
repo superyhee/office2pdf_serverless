@@ -1,7 +1,11 @@
-# Convert office to pdf
-convert office document to pdf by aws lambda and generate thumbnails by aws lambda
+### **Convert office to pdf**
 
+Convert office document to pdf and generate thumbnails by aws lambda
+
+### 
 Guide:
-Edit S3_BUCKET_NAME in deployment-script.sh.
-./deployment-script.sh   
+
+1. Edit ‘S3_BUCKET_NAME’ in deployment-script.sh
+2. ./deployment-script.sh 
+3. upload pptx to S3_BUCKET_NAME
 
