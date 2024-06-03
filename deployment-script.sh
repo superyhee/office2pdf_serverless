@@ -1,7 +1,8 @@
 #!/bin/bash
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 # 设置 AWS CLI 配置
-AWS_REGION="ap-southeast-1"
+: ${AWS_REGION:=$(aws configure get region)}
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
+
 AWS_PROFILE="default"
 
 # 设置 ECR 存储库名称
